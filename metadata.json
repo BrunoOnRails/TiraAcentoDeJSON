@@ -1,0 +1,5 @@
+{
+  "name": "JSON Accent Remover",
+  "description": "An application to upload a JSON file, remove accents from all its string values, and download the modified file.",
+  "requestFramePermissions": []
+}
