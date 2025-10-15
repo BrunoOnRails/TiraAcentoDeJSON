@@ -1,11 +1,14 @@
 
 /**
- * Removes diacritics/accents from a string.
+ * Removes diacritics/accents and a set of special characters from a string.
+ * Characters removed include: °, ¬, ¢, £, €, ¥, §, ©, ®, ™, ¶
  * @param str The input string.
- * @returns The string without accents.
+ * @returns The string without accents and specified special characters.
  */
 const removeAccents = (str: string): string => {
-  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  // The first part of the regex [\u0300-\u036f] handles diacritics/accents after normalization.
+  // The second part handles specific special characters.
+  return str.normalize('NFD').replace(/[\u0300-\u036f°¬¢£€¥§©®™¶]/g, '');
 };
 
 /**
