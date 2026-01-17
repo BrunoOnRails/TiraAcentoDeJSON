@@ -1,19 +1,45 @@
 
 import React from 'react';
-import { WrenchScrewdriverIcon } from './Icons';
+import { ArrowDownTrayIcon, BeakerIcon } from './Icons';
+import Button from './Button';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onDownload: () => void;
+  hasData: boolean;
+  fileName: string;
+}
+
+const Header: React.FC<HeaderProps> = ({ onDownload, hasData, fileName }) => {
   return (
-    <header className="py-8 text-center border-b border-gray-700/50">
-        <div className="inline-flex items-center justify-center bg-indigo-500/10 text-indigo-400 rounded-full p-3 mb-4">
-            <WrenchScrewdriverIcon className="h-8 w-8" />
+    <header className="h-14 px-6 border-b border-studio-border bg-studio-panel flex items-center justify-between shrink-0">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <div className="bg-studio-accent/20 p-1.5 rounded-md">
+            <BeakerIcon className="h-5 w-5 text-studio-accent" />
+          </div>
+          <h1 className="text-sm font-semibold tracking-tight text-white hidden sm:block">
+            JSON Accent Remover
+          </h1>
         </div>
-      <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
-        Removedor de Acentos JSON
-      </h1>
-      <p className="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">
-        Faça o upload de um arquivo JSON para remover automaticamente os acentos de todas as chaves e valores de texto.
-      </p>
+        {fileName && (
+          <div className="h-4 w-px bg-studio-border mx-2"></div>
+        )}
+        <span className="text-xs text-studio-muted truncate max-w-[200px]">
+          {fileName || 'Novo Projeto'}
+        </span>
+      </div>
+
+      <div className="flex items-center gap-3">
+        {hasData && (
+          <Button 
+            onClick={onDownload} 
+            className="h-8 px-4 text-xs font-medium bg-studio-accent hover:bg-studio-accent/90 text-white rounded-md flex items-center gap-2 transition-all shadow-sm shadow-studio-accent/20"
+          >
+            <ArrowDownTrayIcon className="h-4 w-4" />
+            Download JSON
+          </Button>
+        )}
+      </div>
     </header>
   );
 };

@@ -6,25 +6,25 @@
  * @returns The string without accents and specified special characters.
  */
 const removeAccents = (str: string): string => {
-  // The first part of the regex [\u0300-\u036f] handles diacritics/accents after normalization.
-  // The second part handles specific special characters.
+  if (!str) return str;
   return str.normalize('NFD').replace(/[\u0300-\u036f°¬¢£€¥§©®™¶]/g, '');
 };
 
 /**
  * Recursively traverses an object or array and removes accents from all string values.
  * @param data The input object, array, or primitive.
+ * @param processKeys Whether to remove accents from object keys.
  * @returns The processed data structure with accents removed from strings.
  */
-export const removeAccentsFromObject = (data: any): any => {
+export const removeAccentsFromObject = (data: any, processKeys: boolean = true): any => {
   if (Array.isArray(data)) {
-    return data.map(item => removeAccentsFromObject(item));
+    return data.map(item => removeAccentsFromObject(item, processKeys));
   }
   
   if (typeof data === 'object' && data !== null) {
     return Object.keys(data).reduce((acc, key) => {
-      const newKey = removeAccents(key); // Also remove accents from keys
-      acc[newKey] = removeAccentsFromObject(data[key]);
+      const newKey = processKeys ? removeAccents(key) : key;
+      acc[newKey] = removeAccentsFromObject(data[key], processKeys);
       return acc;
     }, {} as { [key: string]: any });
   }
@@ -33,5 +33,5 @@ export const removeAccentsFromObject = (data: any): any => {
     return removeAccents(data);
   }
 
-  return data; // Return numbers, booleans, null, etc. as is
+  return data;
 };

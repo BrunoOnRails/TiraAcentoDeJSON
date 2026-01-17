@@ -1,6 +1,6 @@
 
 import React, { useCallback, useState } from 'react';
-import { ArrowUpTrayIcon, DocumentTextIcon, CheckCircleIcon } from './Icons';
+import { CloudArrowUpIcon } from './Icons';
 
 interface FileUploaderProps {
   onFileSelect: (file: File) => void;
@@ -8,81 +8,54 @@ interface FileUploaderProps {
 }
 
 const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelect, isLoading }) => {
-  const [fileName, setFileName] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      setFileName(file.name);
-      onFileSelect(file);
-    }
-    // Reset the input value to allow re-uploading the same file
+    if (file) onFileSelect(file);
     event.target.value = '';
   };
 
   const handleDrop = useCallback((event: React.DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
-    event.stopPropagation();
     setIsDragOver(false);
     const file = event.dataTransfer.files?.[0];
-    if (file && file.type === 'application/json') {
-      setFileName(file.name);
+    if (file && (file.type === 'application/json' || file.name.endsWith('.json'))) {
       onFileSelect(file);
-    } else {
-      // Could show an error here
-      console.error("Invalid file type. Please upload a JSON file.");
     }
   }, [onFileSelect]);
 
-  const handleDragOver = (event: React.DragEvent<HTMLLabelElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = (event: React.DragEvent<HTMLLabelElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragOver(false);
-  };
-
   return (
-    <div>
+    <div className="w-full">
       <label
         htmlFor="file-upload"
-        className={`relative flex flex-col items-center justify-center w-full h-48 sm:h-56 p-4 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-300
-                    ${isDragOver ? 'border-indigo-400 bg-indigo-900/20' : 'border-gray-600 hover:border-gray-500 bg-gray-700/50 hover:bg-gray-700'}`}
+        className={`relative flex flex-col items-center justify-center w-full min-h-[280px] p-8 border-2 border-dashed rounded-[2.5rem] cursor-pointer transition-all duration-300 group
+                    ${isDragOver 
+                      ? 'border-brand-primary bg-blue-50/50 ring-8 ring-brand-primary/5' 
+                      : 'border-slate-300 hover:border-brand-primary/50 bg-white hover:bg-slate-50/50 shadow-sm'}`}
         onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
+        onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+        onDragLeave={() => setIsDragOver(false)}
       >
         <div className="flex flex-col items-center justify-center text-center">
             {isLoading ? (
-                <>
-                    <svg className="animate-spin h-10 w-10 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <p className="mt-4 text-lg text-gray-300">Processando...</p>
-                </>
-            ) : fileName ? (
-                 <>
-                    <CheckCircleIcon className="h-12 w-12 text-green-400" />
-                    <p className="mt-2 text-lg font-semibold text-gray-200">{fileName}</p>
-                    <p className="text-sm text-gray-400">Arquivo carregado. Clique ou arraste para substituir.</p>
-                </>
+                <div className="flex flex-col items-center">
+                    <div className="animate-spin h-10 w-10 border-4 border-brand-primary border-t-transparent rounded-full mb-4"></div>
+                    <p className="text-lg font-medium text-brand-text">Higienizando dados...</p>
+                </div>
             ) : (
                 <>
-                    <ArrowUpTrayIcon className="h-12 w-12 text-gray-400" />
-                    <p className="mt-2 text-lg text-gray-300">
-                        <span className="font-semibold text-indigo-400">Clique para fazer upload</span> ou arraste e solte
+                    <div className="mb-6 p-5 rounded-full bg-blue-50 text-brand-primary group-hover:scale-110 transition-transform duration-300">
+                        <CloudArrowUpIcon className="h-10 w-10" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-brand-text mb-2">Arraste seu arquivo aqui</h2>
+                    <p className="text-brand-muted font-medium">
+                        Suporta arquivos <span className="text-brand-primary">JSON (.json)</span>
                     </p>
-                    <p className="text-sm text-gray-500">Apenas arquivos JSON são permitidos</p>
                 </>
             )}
         </div>
-        <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept=".json" disabled={isLoading} />
+        <input id="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept=".json" disabled={isLoading} />
       </label>
     </div>
   );
