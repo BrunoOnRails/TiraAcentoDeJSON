@@ -68,7 +68,7 @@ export default function App() {
       {/* Top Navigation */}
       <div className="w-full max-w-4xl flex justify-start mb-8">
         <button 
-          onClick={reset}
+          onClick={() => window.location.href = 'https://brunosilva.dev'}
           className="flex items-center gap-2 text-sm font-medium text-brand-muted hover:text-brand-primary transition-colors bg-white px-4 py-2 rounded-xl border border-brand-border shadow-sm"
         >
           <ChevronLeftIcon className="h-4 w-4" />
